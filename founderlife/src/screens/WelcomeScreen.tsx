@@ -1,65 +1,77 @@
-import { ArrowRight, Globe2, RotateCcw } from "lucide-react";
+import { ChevronRight, Play, Plus, Settings2 } from "lucide-react";
 import type { ScreenProps } from "./types";
 export default function WelcomeScreen({
   game,
   heading,
   go,
   setRestart,
+  setSettings,
 }: ScreenProps) {
+  const saved = !!game.continent;
   return (
-    <>
-      <div className="welcome-content">
-        <div className="eyebrow">
-          <span className="small-line" /> A LIFE YOU BUILD
-        </div>
+    <section className="title-screen">
+      <div className="title-brand">
+        <span className="eyebrow">A WORLD OF YOUR OWN</span>
         <h1 ref={heading} tabIndex={-1}>
-          Every empire
-          <br />
-          begins <em>somewhere.</em>
+          FOUNDER<span>LIFE</span>
+          <i>V1</i>
         </h1>
-        <p className="welcome-copy">
-          Your journey. Your decisions. Your legacy.
-        </p>
-        <div className="welcome-actions">
+        <span className="title-edition">THE BEGINNING</span>
+      </div>
+      <nav
+        className="game-menu"
+        aria-label="Main menu"
+        onKeyDown={(e) => {
+          if (!["ArrowUp", "ArrowDown", "Home", "End"].includes(e.key)) return;
+          e.preventDefault();
+          const buttons = Array.from(
+            e.currentTarget.querySelectorAll("button"),
+          );
+          const current = buttons.indexOf(
+            document.activeElement as HTMLButtonElement,
+          );
+          const index =
+            e.key === "Home"
+              ? 0
+              : e.key === "End"
+                ? buttons.length - 1
+                : (current + (e.key === "ArrowUp" ? -1 : 1) + buttons.length) %
+                  buttons.length;
+          buttons[index]?.focus();
+        }}
+      >
+        {saved && (
           <button
-            className="primary"
             onClick={() =>
-              go(
-                game.complete
-                  ? "journey"
-                  : game.continent
-                    ? "gender"
-                    : "continent",
-              )
+              go(game.complete ? "journey" : game.gender ? "preview" : "gender")
             }
           >
-            {game.complete ? "Continue Your Journey" : "Begin Your Journey"}
-            <ArrowRight size={19} />
+            <Play size={17} />
+            <span>
+              Continue
+              <small>
+                {game.continent} ·{" "}
+                {game.complete ? "Founder House" : "Character setup"}
+              </small>
+            </span>
+            <ChevronRight />
           </button>
-          {(game.continent || game.complete) && (
-            <button className="text-button" onClick={() => setRestart(true)}>
-              <RotateCcw size={14} /> Start a new journey
-            </button>
-          )}
-        </div>
-        <div className="welcome-detail">
-          <Globe2 size={17} />
-          <span>ONE WORLD. YOUR POSSIBILITIES.</span>
-        </div>
+        )}
+        <button onClick={() => (saved ? setRestart(true) : go("continent"))}>
+          <Plus size={18} />
+          <span>New Game</span>
+          <ChevronRight />
+        </button>
+        <button onClick={() => setSettings(true)}>
+          <Settings2 size={18} />
+          <span>Settings</span>
+          <ChevronRight />
+        </button>
+      </nav>
+      <div className="world-caption">
+        <span className="live-dot" /> FOUNDER HOUSE{" "}
+        <small>06:42 · A new day in the city</small>
       </div>
-      <div className="location-caption">
-        <span className="location-cross">+</span>
-        <div>
-          THE WORLD IS YOUR STARTING POINT
-          <small>A new perspective. An unwritten story.</small>
-        </div>
-      </div>
-      <div className="chapter-marker">
-        <span>01</span>
-        <div>
-          THE BEGINNING<small>Your first move changes everything.</small>
-        </div>
-      </div>
-    </>
+    </section>
   );
 }

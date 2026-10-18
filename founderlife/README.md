@@ -1,10 +1,10 @@
-# FounderLife · Phase 1
+# FounderLife · V1
 
-A browser game beginning: cinematic welcome, six-region atlas, identity selection, illustrated founder preview, and an interactive 3D studio. All project files live inside `games/founderlife`; the repository root is unchanged.
+A browser simulation opening with a rendered 3D title courtyard, persistent region/presentation onboarding, founder concept preview, 3D studio and functional **Founder Workstation**. All project files remain in `games/founderlife/`.
 
 ## Run
 
-Node.js 22.12+ (or 24 LTS), npm, and a modern browser are recommended.
+Node.js 22.12+ or 24 LTS and npm:
 
 ```sh
 cd founderlife # from the games checkout
@@ -12,26 +12,47 @@ npm install
 npm run dev
 ```
 
-For repeatable installs use `npm ci`. If your cloud user has no writable npm cache, use `npm ci --cache .npm-cache`. Build with `npm run build`; serve the production build with `npm run preview`. Output: `dist/`.
+Repeatable install: `npm ci`. If the cloud user's default npm cache is not writable, use `npm ci --cache .npm-cache`. Production: `npm run build`, then `npm run preview`. Output is `dist/`.
 
-## Controls and saves
+## Play
 
-Choose **Begin Your Journey**, a continent, a presentation, then **Start FounderLife**. Back preserves choices. Return to the main menu to continue or restart; restart asks before clearing onboarding and preserves graphics/motion settings. Settings are available on every screen. Browser back/forward works. Region choices and buttons support keyboard Enter/Space and touch. Dialogs trap focus and close with Escape. The map has equivalent labeled selection buttons.
+**New Game** opens onboarding. Select a continent and presentation, review the founder concept and choose **Start FounderLife**. Choices survive back navigation and reload. **Continue** appears only when saved region progress exists. New Game asks before resetting existing onboarding; graphics and motion settings stay intact. Keyboard: Tab/Enter/Space; the main menu also supports arrows/Home/End. Settings are available throughout.
 
-In the studio, drag to orbit, pinch/scroll to zoom, and click the desk or use **Open your desk**. There is no character movement, business simulation, audio, or account system in this phase. Progress is local to this browser and origin, not synced. Invalid or corrupted saves recover safely. Storage failures show a session-only warning.
+The studio's **Approach workstation** button (or E while exploring) moves the temporary 3D pose rig to the desk and adjusts the camera. The figure is an original temporary mannequin/presentation rig, not a realistic or fully animated character. Onboarding art remains explicitly illustrated. Region never determines ethnicity.
 
-## Architecture
+At the computer:
 
-- `src/App.tsx`: application shell and dialogs. `src/screens/`: individual onboarding/game screens; `src/state/navigation.ts`: guarded browser-history routes.
-- `src/state/store.ts`: typed Zustand state, validated version-1 local storage, settings and reset.
-- `src/components/`: original vector city, stylized atlas and character concepts; `CharacterPreview.tsx` defines the future licensed model slot. Region provides context and accent only; it never selects ethnicity. Presentation presets do not constrain future appearance.
-- `src/game/Studio.tsx`: lazy React Three Fiber scene and WebGL/error fallback. On-demand rendering, capped DPR, no postprocessing or external model downloads. R3F disposes declarative scene resources when unmounted. Controls are cleaned up by Drei; the canvas is unmounted on exit. The temporary WebGL probe explicitly releases its context.
-- `src/styles.css`: shared tokens, responsive compositions, reduced-motion rules.
-- `tests/`: persistence unit tests and desktop/mobile end-to-end tests.
+1. Try the included local practice page, or enter an HTTPS website and select **Load Website**. Ordinary domains normalize to HTTPS. The last valid submitted address is stored locally.
+2. Select **Activate Keyboard for Work**. The same monitor surface expands to a native-pixel reading view, pointer input is enabled after camera alignment, and the iframe is focused where the browser permits. Game shortcuts are removed during workstation interaction.
+3. Type into fields, click buttons/links, Tab and scroll on compatible pages. The same iframe survives enlarging/restoring. **Restore monitor view** returns to a read-only perspective preview and pauses work input; activating again keeps your current page and form state. Live interaction intentionally uses the enlarged view to avoid browser hit-testing errors in scaled iframes.
+4. **Exit Work Mode** stays available outside the iframe, including on its monitor chrome. It restores the camera/standing state and focus to the approach control. The last submitted URL remains available, but external sites are not automatically fetched when reopening the desk.
 
-The welcome and character concepts are original SVG illustrations, not rendered photorealistic assets. Only the studio is 3D. Fonts are bundled locally; no Google Fonts requests, API keys, external image hosts, database, or backend are required. The initial application JS is separate from the lazy atlas and the larger Three.js studio chunk; 3D is loaded only at game entry. Vite may warn about the size of that lazy 3D chunk; it is not part of the welcome download. No FPS guarantee is made.
+WebGL-unavailable devices retain onboarding and an enlarged accessible workstation view. Graphics settings control shadows/antialiasing. DPR adapts to device pixel density and viewport size within low/medium/high pixel budgets. Reduced-motion preferences snap movement. Three.js renders on demand; title camera animation is throttled, stops in hidden tabs and is disabled at low quality or with reduced motion. GPU resources, textures, timers and event listeners are cleaned up. No FPS is claimed.
 
-## Checks
+## Website compatibility and privacy
+
+Not every website permits embedding. FounderLife respects X-Frame-Options, CSP, same-origin rules and sandbox restrictions. A frame load event is **not** proof of success. The console always says embedding is unverified. Use **Website not visible?** for **Open in Browser**, **Try Another URL**, and **Return to Game**. Nothing strips restrictions or proxies external pages.
+
+The iframe allows scripts and forms, but deliberately does not grant same-origin access, popups, downloads, top navigation or camera/microphone/location/clipboard permissions. Sites that require cookies, local storage, login redirects, payment flows or broader permissions can break. Native browser shortcuts and a full browser UI are not promised. See [DESIGN.md](DESIGN.md) for the detailed browser contract.
+
+FounderLife does not read external page contents, collect passwords, inject code or record iframe keystrokes. Only the submitted URL is saved; it may include a query string you enter, so avoid sensitive links. Existing onboarding uses the unchanged `founderlife.v1` save key. Workstation URLs use a separate validated key. Progress is local to this browser/origin. No account, server, API key, paid service or database is required.
+
+## Source layout
+
+- `src/App.tsx`: application shell, guarded history navigation, settings and reset confirmation.
+- `src/screens/`: menu, onboarding and studio composition.
+- `src/state/`: original compatible save validation, regions and routes.
+- `src/game/UrbanWorld.tsx`: original 3D title courtyard.
+- `src/game/SceneCanvas.tsx`: shared renderer quality, WebGL detection and cleanup.
+- `src/game/Studio.tsx`, `WorkstationRoom.tsx`, `FounderPose.tsx`: studio, camera/pose transition and monitor projection.
+- `src/workstation/`: state machine, URL validation/persistence, address console, perspective math and sandboxed live iframe.
+- `public/workstation/practice.html`: self-contained interactive practice website.
+- `src/components/`: shared HUD, atlas, scene boundary and honest character concept system.
+- `tests/`: URL/state/projection/persistence/routing tests and desktop/mobile interaction tests.
+
+Assets and licenses: [ASSETS.md](ASSETS.md). Roadmap boundaries: [ROADMAP.md](ROADMAP.md). Verification and limitations: [QA.md](QA.md).
+
+## Test
 
 ```sh
 npm test
@@ -39,24 +60,15 @@ npx playwright install chromium
 npx playwright test
 ```
 
-Use `PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium npx playwright test` when a system browser is already installed. Browser tests use a single worker for modest memory usage. Test images/results go to ignored `test-results/`. Software WebGL is enabled for headless CI only, not for the application renderer.
+When system Chromium is present: `PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium npx playwright test`. Tests use one worker, low graphics and reduced motion to avoid burdening modest development machines. Browser tests use locally controlled pages and Playwright-intercepted HTTPS fixtures; they do not depend on a third-party site being online. Headless software WebGL is a correctness check, not a hardware benchmark. Ignored screenshots/results are in `test-results/`.
 
-Manual review: complete all screens; switch region/presentation; navigate backward; refresh `/begin/founder` and `/journey`; continue after reopening; cancel and confirm restart; use Tab/Enter/Escape; test a narrow phone and landscape; orbit/zoom and open the studio desk; compare graphics settings; enable reduced motion; disable WebGL to review fallback. Check representative physical low-end hardware before making performance claims.
+## Vercel
 
-## Vercel deployment — important monorepo setting
+1. Import `itzhaydar/games` into Vercel, or allow the already-connected project to rebuild after the push.
+2. **Root Directory: `founderlife`** (not the repository root).
+3. Framework: **Vite**. Install: `npm ci`. Build: `npm run build`. Output: `dist`.
+4. No environment variables are needed. Deploy, then verify the actual HTTPS domain.
 
-1. Push this project folder to your GitHub `games` repository.
-2. Import that repository into Vercel.
-3. Set **Root Directory to `founderlife`**. Do not use the repository root.
-4. Choose **Vite**. Install: `npm ci`; Build: `npm run build`; Output: `dist`.
-5. Deploy. No environment variables are needed.
+`vercel.json` preserves SPA rewrites for extensionless routes. Hard-refresh `/begin/region`, `/begin/identity`, `/begin/founder` and `/journey`. Unknown routes such as `/hangar` show the main menu; there is no hangar feature. Protected steps safely recover when progress is absent. Static assets, including the practice page, retain normal paths.
 
-`founderlife/vercel.json` includes the build/output configuration and a rewrite of extensionless application paths to `/index.html`. This supports direct links and refreshes at `/begin/region`, `/begin/identity`, `/begin/founder`, `/journey`, and other extensionless paths. Static assets retain their normal paths. Unknown routes (for example `/hangar`) intentionally show the main menu; there is no hangar feature in Phase 1. A new browser with no saved onboarding is redirected in application state to a safe entry screen when visiting a protected step.
-
-After deployment, verify those URLs with a hard refresh on the actual Vercel domain. Local Vite fallback checks do not prove Vercel publication. No production deployment has been performed by this implementation.
-
-## Assets and licensing
-
-City, character art and studio geometry are original project artwork. Atlas coastlines derive from public-domain Natural Earth data; see [ASSETS.md](ASSETS.md). The atlas is a stylized selection illustration, not a geographical reference. DM Sans and Playfair Display are distributed through Fontsource under the SIL Open Font License; license texts are in their installed packages. Lucide icons are ISC licensed. No third-party character model is included. Review dependency notices before commercial distribution.
-
-See [ROADMAP.md](ROADMAP.md) for phase boundaries and completion status.
+Vercel publication and external-site compatibility on the deployed origin must be verified there. A Git push or local preview is not proof of deployment.

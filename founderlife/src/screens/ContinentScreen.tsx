@@ -10,11 +10,11 @@ export default function ContinentScreen({ game, heading, go }: ScreenProps) {
     <div className="onboarding region-screen">
       <Step number={1} />
       <div className="screen-heading">
-        <span className="eyebrow">SIX CONTINENTS. ONE FIRST STEP.</span>
+        <span className="eyebrow">SELECT STARTING REGION</span>
         <h1 ref={heading} tabIndex={-1}>
-          Where does <em>your story begin?</em>
+          Choose your world
         </h1>
-        <p>Choose a starting region. Your ambition has no borders.</p>
+        <p>Six regions. One starting point.</p>
       </div>
       <div className="region-layout">
         <div className="map-wrap">

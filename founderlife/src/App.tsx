@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Settings2, X, Check, Monitor } from "lucide-react";
-import CityBackdrop from "./components/CityBackdrop";
+import WorldBackdrop from "./components/WorldBackdrop";
 import { useGame } from "./state/store";
 import { routes, validScreen, type Screen } from "./state/navigation";
 import WelcomeScreen from "./screens/WelcomeScreen";
@@ -21,8 +21,6 @@ export default function App() {
   const [settings, setSettings] = useState(false);
   const [restart, setRestart] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [desk, setDesk] = useState(false);
-  const [note, setNote] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const modal = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLElement | null>(null);
@@ -40,9 +38,9 @@ export default function App() {
     };
   }, []);
   useEffect(() => {
-    heading.current?.focus();
+    heading.current?.focus({ preventScroll: true });
   }, [screen]);
-  const dialogOpen = settings || restart || desk;
+  const dialogOpen = settings || restart;
   useEffect(() => {
     if (!dialogOpen) return;
     trigger.current = document.activeElement as HTMLElement;
@@ -53,7 +51,6 @@ export default function App() {
       if (e.key === "Escape") {
         setSettings(false);
         setRestart(false);
-        setDesk(false);
       }
       if (e.key === "Tab") {
         const items = modal.current?.querySelectorAll<HTMLElement>(
@@ -75,7 +72,7 @@ export default function App() {
     return () => {
       document.body.style.overflow = prior;
       document.removeEventListener("keydown", key);
-      trigger.current?.focus();
+      trigger.current?.focus({ preventScroll: true });
     };
   }, [dialogOpen]);
   const start = () => {
@@ -98,7 +95,7 @@ export default function App() {
     <div
       className={`app screen-${screen} ${game.reducedMotion ? "reduce-motion" : ""}`}
     >
-      <CityBackdrop />
+      {screen !== "journey" && <WorldBackdrop />}
       <div className="grain" aria-hidden="true" />
       <header className="topbar">
         <button
@@ -114,7 +111,7 @@ export default function App() {
         </button>
         <div className="header-right">
           <span className="phase-label">
-            THE BEGINNING <span> / </span> CHAPTER 01
+            FOUNDER HOUSE <span> / </span> V1
           </span>
           <button
             className="icon-button"
@@ -132,16 +129,15 @@ export default function App() {
           go={go}
           start={start}
           setRestart={setRestart}
-          setDesk={setDesk}
+          setSettings={setSettings}
         />
       </main>
       <footer>
         <span>
-          FOUNDERLIFE <span className="footer-separator">/</span> YOUR STORY, IN
-          THE MAKING.
+          FOUNDERLIFE <span className="footer-separator">/</span> LOCAL SAVE
         </span>
         <span>
-          PHASE 01 <span className="status-dot" /> EARLY ACCESS
+          PHASE 01 <span className="status-dot" /> DEVELOPMENT BUILD
         </span>
       </footer>
       {game.storageError && (
@@ -169,7 +165,6 @@ export default function App() {
             if (e.target === e.currentTarget) {
               setSettings(false);
               setRestart(false);
-              setDesk(false);
             }
           }}
         >
@@ -186,7 +181,6 @@ export default function App() {
               onClick={() => {
                 setSettings(false);
                 setRestart(false);
-                setDesk(false);
               }}
             >
               <X size={20} />
@@ -194,7 +188,7 @@ export default function App() {
             {settings ? (
               <>
                 <span className="eyebrow">MAKE YOURSELF AT HOME</span>
-                <h2 id="dialog-title">Your settings.</h2>
+                <h2 id="dialog-title">Settings</h2>
                 <label className="setting-row">
                   <span>
                     <Monitor size={18} /> Graphics quality
@@ -232,7 +226,7 @@ export default function App() {
                   <Check size={17} />
                 </button>
               </>
-            ) : restart ? (
+            ) : (
               <>
                 <span className="eyebrow">A FRESH PAGE</span>
                 <h2 id="dialog-title">Begin again?</h2>
@@ -245,11 +239,10 @@ export default function App() {
                   onClick={() => {
                     game.restart();
                     setRestart(false);
-                    setNote(false);
                     go("continent");
                   }}
                 >
-                  Start a new journey
+                  New Game
                   <ArrowRight size={18} />
                 </button>
                 <button
@@ -259,44 +252,8 @@ export default function App() {
                   Keep my journey
                 </button>
               </>
-            ) : (
-              <>
-                <span className="eyebrow">A NOTE TO YOUR FUTURE SELF</span>
-                <h2 id="dialog-title">Start with a possibility.</h2>
-                <p>
-                  This is your first workspace in {game.continent}. Before the
-                  company, the team, the late nights — there’s a single idea.
-                </p>
-                <div className="desk-note">
-                  “What could I create that makes someone’s life a little
-                  better?”
-                </div>
-                <p className="fine-print">
-                  You’ve reached the end of Phase 1. Business creation and
-                  simulation will arrive in Phase 4.
-                </p>
-                <button
-                  className="primary"
-                  onClick={() => {
-                    setNote(true);
-                    setDesk(false);
-                  }}
-                >
-                  Take it all in
-                  <Check size={17} />
-                </button>
-              </>
             )}
           </div>
-        </div>
-      )}
-      {note && !dialogOpen && screen === "journey" && (
-        <div className="note-status" role="status">
-          <Check size={16} /> Your first step is taken. The rest is still to be
-          written.
-          <button onClick={() => setNote(false)} aria-label="Dismiss message">
-            <X size={14} />
-          </button>
         </div>
       )}
     </div>

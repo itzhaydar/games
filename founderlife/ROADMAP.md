@@ -15,6 +15,18 @@
 - [ ] Actual Vercel deployment and production-domain refresh verification (requires deployment).
 - [ ] Physical low-memory device performance evaluation (no FPS claim).
 
+## Authorized V1 upgrade — UI and Founder Workstation
+
+- [x] Milestone A: rendered title courtyard, game menu, compact selections and HUD.
+- [x] Preserve the original version-1 onboarding save format and route guards.
+- [x] Milestone B: temporary articulated seated pose, scripted approach and camera transition.
+- [x] Camera-projected live iframe, native-pixel work view and persistent enlarged surface.
+- [x] HTTPS validation, saved submitted URL, explicit input ownership and visible exits.
+- [x] Unverified-embed notice, manual browser restriction fallback and local practice page.
+- [x] No backend, proxy, realistic asset claims or unrelated simulation systems.
+
+This is the explicitly requested V1 upgrade, not authorization to implement the remaining phases.
+
 ## Phase 2 — Your Founder · requires explicit authorization
 
 Licensed realistic GLB humans, independent face/hair/clothing/body customization, animation, save/reload, optimized textures and LODs. Phase 1 illustrations are temporary concepts; no realism claim.

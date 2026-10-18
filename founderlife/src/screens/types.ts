@@ -7,5 +7,5 @@ export type ScreenProps = {
   go: (s: Screen) => void;
   start: () => void;
   setRestart: (v: boolean) => void;
-  setDesk: (v: boolean) => void;
+  setSettings: (v: boolean) => void;
 };

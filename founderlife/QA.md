@@ -1,27 +1,34 @@
-# Phase 1 verification
+# V1 verification — game UI and Founder Workstation
 
-## Verified in the cloud workspace
+## Passed
 
-- A repeatable `npm ci --cache .npm-cache` clean install, TypeScript checking and production Vite build pass.
-- Six Vitest tests pass: invalid/corrupted/missing save recovery, required selections, valid saved settings, and Vercel route/static-asset matching.
-- Eight Playwright tests pass in system Chromium, using a single worker: desktop and mobile full onboarding, disabled continue states, back navigation and preserved selections, deep-link reload, completion, real studio canvas rendering, desk interaction, main-menu continue, settings persistence, confirmed restart, keyboard selection, corrupted saves, explicit WebGL-unavailable fallback, and 320px-wide layout checks.
-- Full-flow tests observed no uncaught browser page errors.
-- A separate browser smoke test against the built production output passed nested-route refresh, guarded game entry, rendered WebGL canvas, regional desk interaction and unknown-route fallback, with no failed HTTP responses or uncaught browser errors.
-- Desktop welcome/studio and mobile region screenshots were inspected. A mobile focus-scroll offset found in the first review was corrected.
-- Only the `founderlife/` directory was added; the existing root README and tracked repository files were not changed.
+- Clean `npm ci --cache .npm-cache --no-audit --no-fund` installation using the committed lockfile.
+- TypeScript checking and production Vite build.
+- **28 Vitest tests**: compatible original save validation, required onboarding choices, safe HTTPS normalization/rejection, interaction-state ownership/cancellation, perspective corner mapping, adaptive pixel budgets and Vercel application/static-asset route matching.
+- **20 Playwright tests, all passing in one final run**: desktop/mobile onboarding, back/reload/persistence, disabled states, Continue/New Game, restart/settings, corrupted-save recovery, 320px layouts, actual rendered title/studio canvases, menu arrow navigation, graphics changes, WebGL-unavailable fallback, local practice page, controlled independent HTTPS page, actual keyboard/Tab/pointer/button/checkbox/link/scroll interactions, input ownership, address history and saved URL, enlarged/restored iframe state, exit/focus restoration, browser-back cleanup and deliberately denied embeds.
+- The denied-page fixture sends both `X-Frame-Options: DENY` and `Content-Security-Policy: frame-ancestors 'none'`; Chromium's refusal is observed. The application does not mistake its load event for success. Tests explicitly invoke the manual fallback, verify its external link protections and test recovery.
+- A separate **production-output browser smoke test** passes nested route refresh, the non-reduced-motion approach/seating/camera sequence, real iframe typing/clicking, visible exit, saved Continue and static assets. It observed no uncaught page errors or failed HTTP responses.
+- Original onboarding storage and routes are preserved. Repository-root files are unchanged; the update stays inside `founderlife/`.
 
-Browser tests emulate viewport/touch conditions; they are not a physical phone or low-memory PC benchmark. The studio uses software WebGL in headless testing. No FPS is claimed.
+## Visual and input review
 
-## Deliberate Phase 1 limits
+Desktop title/studio and desktop/mobile workstation screenshots were inspected. Scaled iframe input showed inconsistent browser hit testing during development. The final design uses a camera-projected **read-only live preview**, then automatically expands the same DOM iframe to a **native-pixel work view**. Restoring the perspective view pauses input without remounting the iframe. This behavior is tested rather than claiming arbitrary perspective browsing is reliable.
 
-- Character previews are original illustrations, explicitly labeled as concepts; realistic 3D characters are reserved for Phase 2.
-- The small 3D room has orbit/zoom and desk interaction; there is no walking, city exploration or business simulation.
-- Progress/settings use local browser storage only. No account, backend, cloud save or audio.
-- Vite emits a size warning for the lazy Three.js scene chunk (roughly 244 KB gzip). It is loaded at journey entry, separately from the approximately 79 KB gzip main JS and the approximately 32 KB gzip lazy atlas. These are build sizes, not measured network timings or hardware performance.
-- Vercel configuration is included and route matching is tested locally. A real Vercel deployment and production-domain refresh check have not been performed.
+The title environment is actual original rendered 3D geometry. Character selection art is an explicitly labeled illustration. The studio character is an original temporary articulated pose rig; no realistic model or complete sitting/walking animation is claimed.
 
-## Manual acceptance before public release
+## Performance evidence and limits
 
-Complete the flow with each continent and presentation, compare graphics modes on actual hardware, check keyboard/screen reader and reduced-motion behavior, and hard-refresh the deployed `/begin/founder` and `/journey` URLs. Confirm `founderlife` is the Vercel Root Directory.
+- Renderer quality changes and buffer caps were exercised in Chromium. Adaptive budget math is tested, including a 4K viewport.
+- The production smoke sample used a 1440 × 935 CSS studio viewport and a 1440 × 935 render buffer (effective DPR 1) on low quality.
+- The main JS is about 81 KB gzip. The shared lazy Three.js/R3F renderer is about 238 KB gzip; the title scene, studio and atlas are separate chunks. Vite reports a size warning for the renderer chunk, not a build failure. A real 3D title screen necessarily loads that renderer after the initial shell.
+- Headless Chromium uses software WebGL. Tests emulate mobile viewport/touch conditions; they are not physical-device benchmarks. No FPS, total memory usage or performance on a 4GB PC has been verified or promised.
 
-Phases 2–5 remain unimplemented and require explicit authorization.
+## Browser and deployment limits
+
+The iframe permits scripts/forms and uses an opaque sandbox origin with restricted permissions and no referrer. Some sites block framing or need unavailable storage/login/permissions; universal compatibility is not possible. External embedded page contents, navigation history and keyboard events are not inspected by FounderLife. Only the submitted URL is saved. There is no proxy, server-side fetch, header stripping, password collection or script injection.
+
+Independent HTTPS and denied-site tests use locally controlled Playwright responses, not availability claims about public websites. Vercel routing configuration remains valid and local production refresh tests pass. **An actual Vercel deployment and live-origin external embedding check have not been performed.**
+
+Before public release: review Safari/Firefox and physical phones, test a representative low-memory computer, hard-refresh deployed onboarding/journey routes, and test the intended external websites on the real HTTPS origin. Vercel Root Directory must remain `founderlife`.
+
+No unrelated game phases were implemented.

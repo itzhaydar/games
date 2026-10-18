@@ -31,17 +31,14 @@ export default function PreviewScreen({
           </span>
         </div>
         <div className="preview-copy">
-          <span className="eyebrow">MEET YOUR NEXT CHAPTER</span>
+          <span className="eyebrow">FOUNDER PROFILE</span>
           <h1 ref={heading} tabIndex={-1}>
-            An idea.
-            <br />A beginning.
-            <br />
-            <em>You.</em>
+            Ready to begin?
           </h1>
           <p>
-            You don’t need an empire to begin.
+            Your first workspace is ready.
             <br />
-            Just the courage to take the first step.
+            Make yourself at home.
           </p>
           <dl className="founder-details">
             <div>
